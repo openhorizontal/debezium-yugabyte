@@ -1,0 +1,30 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnector
+metadata:
+  name: CONNECTOR_NAME
+  labels:
+    strimzi.io/cluster: yugabyte-cluster
+spec:
+  class: io.debezium.connector.yugabytedb.YugabyteDBgRPCConnector
+  tasksMax: 1
+  config:
+    database.hostname: yb-tservers.yb-dev.svc.cluster.local
+    database.port: 5433
+    database.master.addresses: yb-masters.yb-dev.svc.cluster.local:7100
+
+    snapshot.mode: never
+
+    # Flatten CDC
+    transforms: 'unwrap'
+    transforms.unwrap.type: 'io.debezium.connector.yugabytedb.transforms.YBExtractNewRecordState'
+
+    # Keep tombstones to propagate delete events downstream
+    transforms.unwrap.drop.tombstones: 'false'
+
+    # Produce clean JSON keys without the schema and payload wrappers
+    'key.converter': 'org.apache.kafka.connect.json.JsonConverter'
+    'key.converter.schemas.enable': 'false'
+
+    # Produce clean JSON values without the schema and payload wrappers
+    'value.converter': 'org.apache.kafka.connect.json.JsonConverter'
+    'value.converter.schemas.enable': 'false'
