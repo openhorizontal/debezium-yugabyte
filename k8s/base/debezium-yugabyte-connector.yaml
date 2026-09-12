@@ -14,20 +14,14 @@ spec:
 
     snapshot.mode: never
 
-    # Flatten CDC
-    transforms: 'unwrap'
-    transforms.unwrap.type: 'io.debezium.connector.yugabytedb.transforms.YBExtractNewRecordState'
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter.schemas.enable: 'false'
 
-    # Keep tombstones to propagate delete events downstream
-    transforms.unwrap.drop.tombstones: 'false'
+    # TODO: Write a README for https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html#basic-outbox-table
+    transforms: pgcompat,outbox
+    transforms.pgcompat.type: io.debezium.connector.yugabytedb.transforms.PGCompatible
+    transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
 
-    # Remove schema wrapper
-    'key.converter.schemas.enable': 'false'
-
-    # Apicurio Avro
-    'value.converter': 'io.apicurio.registry.utils.converter.AvroConverter'
-
-    # Source of truth is the database
-    'value.converter.apicurio.registry.auto-register': 'true'
-
-    'value.converter.apicurio.registry.use-id': 'contentId'
+    value.converter: io.debezium.converters.BinaryDataConverter
+    value.converter.delegate.converter.type: org.apache.kafka.connect.json.JsonConverter
+    value.converter.delegate.converter.type.schemas.enable: 'false'
