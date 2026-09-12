@@ -21,10 +21,13 @@ spec:
     # Keep tombstones to propagate delete events downstream
     transforms.unwrap.drop.tombstones: 'false'
 
-    # Produce clean JSON keys without the schema and payload wrappers
-    'key.converter': 'org.apache.kafka.connect.json.JsonConverter'
+    # Remove schema wrapper
     'key.converter.schemas.enable': 'false'
 
-    # Produce clean JSON values without the schema and payload wrappers
-    'value.converter': 'org.apache.kafka.connect.json.JsonConverter'
-    'value.converter.schemas.enable': 'false'
+    # Apicurio Avro
+    'value.converter': 'io.apicurio.registry.utils.converter.AvroConverter'
+
+    # Source of truth is the database
+    'value.converter.apicurio.registry.auto-register': 'true'
+
+    'value.converter.apicurio.registry.use-id': 'contentId'
