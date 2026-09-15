@@ -17,10 +17,10 @@ spec:
     key.converter: org.apache.kafka.connect.json.JsonConverter
     key.converter.schemas.enable: 'false'
 
-    # TODO: Write a README for https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html#basic-outbox-table
     transforms: pgcompat,outbox
     transforms.pgcompat.type: io.debezium.connector.yugabytedb.transforms.PGCompatible
     transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
+    transforms.outbox.table.fields.additional.placement: eventType:header:type
 
     value.converter: io.debezium.converters.BinaryDataConverter
     value.converter.delegate.converter.type: org.apache.kafka.connect.json.JsonConverter
