@@ -20,7 +20,7 @@ spec:
     transforms: pgcompat,outbox
     transforms.pgcompat.type: io.debezium.connector.yugabytedb.transforms.PGCompatible
     transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
-    transforms.outbox.table.fields.additional.placement: eventType:header:type
+    transforms.outbox.table.fields.additional.placement: type:header:eventType
 
     value.converter: io.debezium.converters.BinaryDataConverter
     value.converter.delegate.converter.type: org.apache.kafka.connect.json.JsonConverter
