@@ -22,7 +22,7 @@ spec:
 
     # PGCompatible unwraps the {value, set} columns of yboutput so EventRouter sees the envelope (like pgoutput)
     transforms: pgcompat,outbox
-    transforms.pgcompat.type: io.debezium.connector.postgresql.transforms.PGCompatible
+    transforms.pgcompat.type: io.debezium.connector.postgresql.transforms.yugabytedb.PGCompatible
     transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
     transforms.outbox.table.fields.additional.placement: type:header:eventType
 
