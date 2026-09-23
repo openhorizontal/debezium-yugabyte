@@ -5,20 +5,22 @@ metadata:
   labels:
     strimzi.io/cluster: yugabyte-cluster
 spec:
-  class: io.debezium.connector.yugabytedb.YugabyteDBgRPCConnector
+  class: io.debezium.connector.postgresql.YugabyteDBConnector
   tasksMax: 1
   config:
     database.hostname: yb-tservers.yb-dev.svc.cluster.local
     database.port: 5433
-    database.master.addresses: yb-masters.yb-dev.svc.cluster.local:7100
+
+    # Outbox Event Router
+    plugin.name: pgoutput 
+    publication.autocreate.mode: filtered
 
     snapshot.mode: never
 
     key.converter: org.apache.kafka.connect.json.JsonConverter
     key.converter.schemas.enable: 'false'
 
-    transforms: pgcompat,outbox
-    transforms.pgcompat.type: io.debezium.connector.yugabytedb.transforms.PGCompatible
+    transforms: outbox
     transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
     transforms.outbox.table.fields.additional.placement: type:header:eventType
 
