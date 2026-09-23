@@ -11,8 +11,8 @@ spec:
     database.hostname: yb-tservers.yb-dev.svc.cluster.local
     database.port: 5433
 
-    # Outbox Event Router
-    plugin.name: pgoutput 
+    # Unlike yboutput, pgoutput is unaware of the internal CHANGE identity format of YugabyteDB and rejects it.
+    plugin.name: yboutput
     publication.autocreate.mode: filtered
 
     snapshot.mode: never
@@ -20,7 +20,9 @@ spec:
     key.converter: org.apache.kafka.connect.json.JsonConverter
     key.converter.schemas.enable: 'false'
 
-    transforms: outbox
+    # PGCompatible unwraps the {value, set} columns of yboutput so EventRouter sees the envelope (like pgoutput)
+    transforms: pgcompat,outbox
+    transforms.pgcompat.type: io.debezium.connector.postgresql.transforms.PGCompatible
     transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
     transforms.outbox.table.fields.additional.placement: type:header:eventType
 
